@@ -12,8 +12,6 @@ import {
 import { Button } from '@/components/ui/button'
 import {
   Form,
-  FormCheckbox,
-  FormCombobox,
   FormElement,
   FormField,
   FormInput,
@@ -50,7 +48,7 @@ import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { Alert, Pressable, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import type * as z from 'zod'
+import * as z from 'zod'
 
 const HabitCategories = [
   { value: 'health', label: 'Health And Wellness' },
@@ -70,7 +68,24 @@ const HabitDurations = [
   { value: 30, label: '30 minutes' },
 ]
 
-const formSchema = habitZodSchema
+const formSchema = createInsertSchema(habitTable, {
+  name: (schema) =>
+    schema.name.min(4, {
+      message: 'Please enter a habit name.',
+    }),
+  description: (schema) =>
+    schema.description.min(1, {
+      message: 'We need to know.',
+    }),
+  category: z.object(
+    { value: z.string(), label: z.string() },
+    {
+      invalid_type_error: 'Please select a favorite email.',
+    },
+  ),
+  duration: z.union([z.string(), z.number()]),
+  enableNotifications: z.boolean(),
+})
 
 // TODO: refactor to use UI components
 

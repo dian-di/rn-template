@@ -24,7 +24,7 @@ import { useDatabase } from '@/db/provider'
 import { habitTable } from '@/db/schema'
 import type { Habit } from '@/db/schema'
 import { Archive } from 'lucide-react-native'
-export default function Home() {
+function Home() {
   const { db } = useDatabase()
   const { data: habits, error } = useLiveQuery(
     db!.select().from(habitTable).where(eq(habitTable.archived, true)),
@@ -139,3 +139,5 @@ export default function Home() {
     </View>
   )
 }
+
+export default Home
