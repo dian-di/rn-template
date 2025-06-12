@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
     "dev:android": "expo start -c --android",
+    "dev:ios": "expo start -c --ios",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "build:web": "expo export --platform web",
@@ -18,7 +19,7 @@
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.0",
     "@gorhom/bottom-sheet": "^5.1.6",
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^5.1.1",
     "@paralleldrive/cuid2": "^2.2.2",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -38,8 +39,8 @@
     "babel-plugin-inline-import": "^3.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "drizzle-orm": "^0.43.1",
-    "drizzle-zod": "^0.5.1",
+    "drizzle-orm": "^0.44.2",
+    "drizzle-zod": "^0.8.2",
     "expo": "^53.0.0",
     "expo-dev-client": "~5.2.0",
     "expo-font": "~13.3.1",
@@ -69,19 +70,20 @@
     "react-native-svg": "15.11.2",
     "react-native-web": "^0.20.0",
     "sql.js": "^1.13.0",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.1",
-    "zustand": "^4.5.6"
+    "zod": "^3.25.63",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/runtime": "^7.26.0",
-    "@types/react": "^19.0.0",
+    "@types/react": "~19.0.10",
     "@types/sql.js": "^1.4.9",
+    "babel-preset-expo": "~13.0.0",
     "drizzle-kit": "^0.31.1",
     "tailwindcss": "3.4.1",
-    "typescript": "~5.3.3"
+    "typescript": "^5.8.3"
   },
   "trustedDependencies": [
     "tailwindcss",

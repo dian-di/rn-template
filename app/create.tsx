@@ -1,145 +1,124 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createInsertSchema } from "drizzle-zod";
-import { Link, Stack, useRouter } from "expo-router";
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { Alert, Platform, Pressable, ScrollView, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 import {
   Form,
-  FormCheckbox,
-  FormCombobox,
-  FormElement,
   FormField,
   FormInput,
   FormRadioGroup,
   FormSelect,
   FormSwitch,
   FormTextarea,
-} from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
-import { RadioGroupItem } from "@/components/ui/radio-group";
+} from '@/components/ui/form'
+import { Label } from '@/components/ui/label'
+import { RadioGroupItem } from '@/components/ui/radio-group'
 import {
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Stack, useRouter } from 'expo-router'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { ScrollView, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import type * as z from 'zod'
 
-import { Text } from "@/components/ui/text";
-import { habitTable } from "@/db/schema";
-import { cn } from "@/lib/utils";
-import { useDatabase } from "@/db/provider";
-
-
+import { Text } from '@/components/ui/text'
+import { useDatabase } from '@/db/provider'
+import { habitTable } from '@/db/schema'
+import { cn } from '@/lib/utils'
+import { habitZodSchema } from '@/lib/zodSchema'
 
 const HabitCategories = [
-  { value: "health", label: "Health And Wellness" },
-  { value: "personal-development", label: "Personal Development" },
-  { value: "social-and-relationshipts", label: "Social And Relationships" },
-  { value: "productivity", label: "Productivity" },
-  { value: "creativity", label: "Creativity" },
-  { value: "mindfulness", label: "Mindfulness" },
-  { value: "financial", label: "Financial" },
-  { value: "leisure", label: "Leisure" },
-];
+  { value: 'health', label: 'Health And Wellness' },
+  { value: 'personal-development', label: 'Personal Development' },
+  { value: 'social-and-relationshipts', label: 'Social And Relationships' },
+  { value: 'productivity', label: 'Productivity' },
+  { value: 'creativity', label: 'Creativity' },
+  { value: 'mindfulness', label: 'Mindfulness' },
+  { value: 'financial', label: 'Financial' },
+  { value: 'leisure', label: 'Leisure' },
+]
 
 const HabitDurations = [
-  { value: 5, label: "5 minutes" },
-  { value: 10, label: "10 minutes" },
-  { value: 15, label: "15 minutes" },
-  { value: 30, label: "30 minutes" },
-];
+  { value: 5, label: '5 minutes' },
+  { value: 10, label: '10 minutes' },
+  { value: 15, label: '15 minutes' },
+  { value: 30, label: '30 minutes' },
+]
 
-const formSchema = createInsertSchema(habitTable, {
-  name: (schema) => schema.name.min(4, {
-    message: "Please enter a habit name.",
-  }),
-  description: (schema) => schema.description.min(1, {
-    message: "We need to know.",
-  }),
-  category: z.object(
-    { value: z.string(), label: z.string() },
-    {
-      invalid_type_error: "Please select a favorite email.",
-    },
-  ),
-  duration: z.union([z.string(), z.number()]),
-  enableNotifications: z.boolean(),
-});
-
-
+const formSchema = habitZodSchema
 
 export default function FormScreen() {
-  const { db } = useDatabase();
-  const router = useRouter();
+  const { db } = useDatabase()
+  const router = useRouter()
 
-  const scrollRef = React.useRef<ScrollView>(null);
-  const insets = useSafeAreaInsets();
-  const [selectTriggerWidth, setSelectTriggerWidth] = React.useState(0);
+  const insets = useSafeAreaInsets()
+  const [selectTriggerWidth, setSelectTriggerWidth] = React.useState(0)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       duration: 5,
-      category: { value: "health", label: "Health And Wellness" },
+      category: { value: 'health', label: 'Health And Wellness' },
       enableNotifications: false,
     },
-  });
+  })
 
   const contentInsets = {
     top: insets.top,
     bottom: insets.bottom,
     left: 12,
     right: 12,
-  };
+  }
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-
     try {
-      await db!.insert(habitTable).values({
-        ...values,
-        category: values.category.value,
-        duration: Number(values.duration),
-      }).returning()
-      router.replace("/")
+      await db!
+        .insert(habitTable)
+        .values({
+          name: values.name,
+          description: values.description,
+          category: values.category.value,
+          duration: values.duration,
+          enableNotifications: values.enableNotifications,
+        })
+        .returning()
+      router.replace('/')
     } catch (e) {
       console.error(e)
     }
-
   }
   return (
     <ScrollView
-      contentContainerClassName="p-6 mx-auto w-full max-w-xl"
+      contentContainerClassName='p-6 mx-auto w-full max-w-xl'
       showsVerticalScrollIndicator={true}
-      className="bg-background"
-
+      className='bg-background'
       automaticallyAdjustContentInsets={false}
       contentInset={{ top: 12 }}
     >
       <Stack.Screen
         options={{
-          title: "New Habit",
+          title: 'New Habit',
           headerShadowVisible: true,
         }}
       />
 
       <Form {...form}>
-        <View className="gap-8">
+        <View className='gap-8'>
           <FormField
             control={form.control}
-            name="name"
+            name='name'
             render={({ field }) => (
               <FormInput
-                label="Name"
-                placeholder="Habit name"
-                className="text-foreground"
-                description="This will help you remind."
-                autoCapitalize="none"
+                label='Name'
+                placeholder='Habit name'
+                className='text-foreground'
+                description='This will help you remind.'
+                autoCapitalize='none'
                 {...field}
               />
             )}
@@ -147,12 +126,12 @@ export default function FormScreen() {
 
           <FormField
             control={form.control}
-            name="description"
+            name='description'
             render={({ field }) => (
               <FormTextarea
-                label="Description"
-                placeholder="Habit for ..."
-                description="habit description"
+                label='Description'
+                placeholder='Habit for ...'
+                description='habit description'
                 {...field}
               />
             )}
@@ -160,24 +139,24 @@ export default function FormScreen() {
 
           <FormField
             control={form.control}
-            name="category"
+            name='category'
             render={({ field }) => (
               <FormSelect
-                label="Category"
-                description="Select on of the habit description"
+                label='Category'
+                description='Select on of the habit description'
                 {...field}
               >
                 <SelectTrigger
                   onLayout={(ev) => {
-                    setSelectTriggerWidth(ev.nativeEvent.layout.width);
+                    setSelectTriggerWidth(ev.nativeEvent.layout.width)
                   }}
                 >
                   <SelectValue
                     className={cn(
-                      "text-sm native:text-lg",
-                      field.value ? "text-foreground" : "text-muted-foreground",
+                      'text-sm native:text-lg',
+                      field.value ? 'text-foreground' : 'text-muted-foreground',
                     )}
-                    placeholder="Select a habit category"
+                    placeholder='Select a habit category'
                   />
                 </SelectTrigger>
                 <SelectContent
@@ -202,18 +181,18 @@ export default function FormScreen() {
 
           <FormField
             control={form.control}
-            name="duration"
+            name='duration'
             render={({ field }) => {
-              function onLabelPress(value: number | string) {
+              function onLabelPress(value: number) {
                 return () => {
-                  form.setValue("duration", value);
-                };
+                  form.setValue('duration', value)
+                }
               }
               return (
                 <FormRadioGroup
-                  label="Duration"
-                  description="Select your duration."
-                  className="gap-4"
+                  label='Duration'
+                  description='Select your duration.'
+                  className='gap-4'
                   {...field}
                   value={field.value.toString()}
                 >
@@ -221,7 +200,7 @@ export default function FormScreen() {
                     return (
                       <View
                         key={item.value}
-                        className={"flex-row gap-2 items-center"}
+                        className={'flex-row gap-2 items-center'}
                       >
                         <RadioGroupItem
                           aria-labelledby={`label-for-${item.label}`}
@@ -229,26 +208,26 @@ export default function FormScreen() {
                         />
                         <Label
                           nativeID={`label-for-${item.label}`}
-                          className="capitalize"
+                          className='capitalize'
                           onPress={onLabelPress(item.value)}
                         >
                           {item.label}
                         </Label>
                       </View>
-                    );
+                    )
                   })}
                 </FormRadioGroup>
-              );
+              )
             }}
           />
 
           <FormField
             control={form.control}
-            name="enableNotifications"
+            name='enableNotifications'
             render={({ field }) => (
               <FormSwitch
-                label="Enable reminder"
-                description="We will send you notification reminder."
+                label='Enable reminder'
+                description='We will send you notification reminder.'
                 {...field}
               />
             )}
@@ -259,19 +238,16 @@ export default function FormScreen() {
           </Button>
           <View>
             <Button
-              variant="ghost"
+              variant='ghost'
               onPress={() => {
-                form.reset();
+                form.reset()
               }}
             >
               <Text>Clear</Text>
             </Button>
           </View>
-
-
         </View>
       </Form>
-
-    </ScrollView >
-  );
+    </ScrollView>
+  )
 }

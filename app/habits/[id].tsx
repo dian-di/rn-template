@@ -1,17 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createInsertSchema } from "drizzle-zod";
-import {
-  Stack,
-  useFocusEffect,
-  useLocalSearchParams,
-  useRouter,
-} from "expo-router";
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { Alert, Pressable, ScrollView, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as z from "zod";
-import { eq } from "drizzle-orm";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,88 +8,86 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormCheckbox,
   FormCombobox,
+  FormElement,
   FormField,
   FormInput,
   FormRadioGroup,
   FormSelect,
-  FormElement,
   FormSwitch,
   FormTextarea,
-} from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
-import { RadioGroupItem } from "@/components/ui/radio-group";
+} from '@/components/ui/form'
+import { Label } from '@/components/ui/label'
+import { RadioGroupItem } from '@/components/ui/radio-group'
 import {
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Text } from "@/components/ui/text";
-import { useDatabase } from "@/db/provider";
-import { habitTable } from "@/db/schema";
-import { cn } from "@/lib/utils";
-import type { Habit } from "@/db/schema";
+} from '@/components/ui/select'
+import { Text } from '@/components/ui/text'
+import { useDatabase } from '@/db/provider'
+import { habitTable } from '@/db/schema'
+import type { Habit } from '@/db/schema'
+import { cn } from '@/lib/utils'
+import { habitZodSchema } from '@/lib/zodSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { eq } from 'drizzle-orm'
+import { createInsertSchema } from 'drizzle-zod'
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from 'expo-router'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { Alert, Pressable, ScrollView, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import type * as z from 'zod'
 
 const HabitCategories = [
-  { value: "health", label: "Health And Wellness" },
-  { value: "personal-development", label: "Personal Development" },
-  { value: "social-and-relationshipts", label: "Social And Relationships" },
-  { value: "productivity", label: "Productivity" },
-  { value: "creativity", label: "Creativity" },
-  { value: "mindfulness", label: "Mindfulness" },
-  { value: "financial", label: "Financial" },
-  { value: "leisure", label: "Leisure" },
-];
+  { value: 'health', label: 'Health And Wellness' },
+  { value: 'personal-development', label: 'Personal Development' },
+  { value: 'social-and-relationshipts', label: 'Social And Relationships' },
+  { value: 'productivity', label: 'Productivity' },
+  { value: 'creativity', label: 'Creativity' },
+  { value: 'mindfulness', label: 'Mindfulness' },
+  { value: 'financial', label: 'Financial' },
+  { value: 'leisure', label: 'Leisure' },
+]
 
 const HabitDurations = [
-  { value: 5, label: "5 minutes" },
-  { value: 10, label: "10 minutes" },
-  { value: 15, label: "15 minutes" },
-  { value: 30, label: "30 minutes" },
-];
+  { value: 5, label: '5 minutes' },
+  { value: 10, label: '10 minutes' },
+  { value: 15, label: '15 minutes' },
+  { value: 30, label: '30 minutes' },
+]
 
-const formSchema = createInsertSchema(habitTable, {
-  name: (schema) =>
-    schema.name.min(4, {
-      message: "Please enter a habit name.",
-    }),
-  description: (schema) =>
-    schema.description.min(1, {
-      message: "We need to know.",
-    }),
-  category: z.object(
-    { value: z.string(), label: z.string() },
-    {
-      invalid_type_error: "Please select category",
-    },
-  ),
-  duration: z.union([z.string(), z.number()]),
-  enableNotifications: z.boolean(),
-});
+const formSchema = habitZodSchema
 
 // TODO: refactor to use UI components
 
 export default function FormScreen() {
-  const { db } = useDatabase();
-  const router = useRouter();
-  const scrollRef = React.useRef<ScrollView>(null);
-  const insets = useSafeAreaInsets();
-  const [habit, setHabit] = React.useState<Habit>();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { db } = useDatabase()
+  const router = useRouter()
+  const scrollRef = React.useRef<ScrollView>(null)
+  const insets = useSafeAreaInsets()
+  const [habit, setHabit] = React.useState<Habit>()
+  const { id } = useLocalSearchParams<{ id: string }>()
 
-  const [selectTriggerWidth, setSelectTriggerWidth] = React.useState(0);
+  const [selectTriggerWidth, setSelectTriggerWidth] = React.useState(0)
   useFocusEffect(
     React.useCallback(() => {
-      fetchHabitById();
+      fetchHabitById()
     }, []),
-  );
+  )
   const defaultValues = React.useMemo(() => {
     if (habit) {
       return {
@@ -115,13 +99,15 @@ export default function FormScreen() {
       }
     }
     return {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       duration: {
-        label: "", value: ""
+        label: '',
+        value: '',
       },
       category: {
-        label: "", value: ""
+        label: '',
+        value: '',
       },
       enableNotifications: false,
     }
@@ -131,81 +117,79 @@ export default function FormScreen() {
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues as z.infer<typeof formSchema>,
     values: defaultValues as z.infer<typeof formSchema>,
-  });
+  })
 
   const contentInsets = {
     top: insets.top,
     bottom: insets.bottom,
     left: 12,
     right: 12,
-  };
+  }
   const fetchHabitById = async () => {
     const fetchedHabit = await db
       ?.select()
       .from(habitTable)
       .where(eq(habitTable.id, id as string))
-      .execute();
+      .execute()
     if (fetchedHabit) {
       setHabit(fetchedHabit[0])
     }
-  };
+  }
 
   const handleArchiveHabit = async () => {
     try {
-      await db?.delete(habitTable).where(eq(habitTable.id, id)).execute();
-      router.replace("/")
+      await db?.delete(habitTable).where(eq(habitTable.id, id)).execute()
+      router.replace('/')
     } catch (error) {
       console.error(error)
     }
-
-  };
+  }
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await db?.update(habitTable).set({
-        name: values.name,
-        description: values.description,
-        duration: Number(values.duration),
-        // category: values.category.value,
-        enableNotifications: values.enableNotifications,
-      }).where(eq(habitTable.id, id as string))
-        .execute();
+      await db
+        ?.update(habitTable)
+        .set({
+          name: values.name,
+          description: values.description,
+          duration: Number(values.duration),
+          // category: values.category.value,
+          enableNotifications: values.enableNotifications,
+        })
+        .where(eq(habitTable.id, id as string))
+        .execute()
 
-      router.replace("/");
+      router.replace('/')
     } catch (error) {
-      console.error("error", error)
+      console.error('error', error)
     }
-
   }
   return (
     <ScrollView
       ref={scrollRef}
-      contentContainerClassName="p-6 mx-auto w-full max-w-xl"
+      contentContainerClassName='p-6 mx-auto w-full max-w-xl'
       showsVerticalScrollIndicator={false}
       automaticallyAdjustContentInsets={false}
       contentInset={{ top: 12 }}
     >
       <Stack.Screen
         options={{
-          title: "Habit",
+          title: 'Habit',
         }}
       />
-      <FormElement
-        onSubmit={handleSubmit} >
-
+      <FormElement onSubmit={handleSubmit}>
         <Form {...form}>
-          <View className="gap-7">
+          <View className='gap-7'>
             <FormField
               control={form.control}
-              name="name"
+              name='name'
               render={({ field }) => (
                 <FormInput
-                  label="Name"
-                  className="text-foreground"
-
-                  placeholder="habit name"
-                  description="This will help you remind."
-                  autoCapitalize="none"
+                  label='Name'
+                  className='text-foreground'
+                  placeholder='habit name'
+                  description='This will help you remind.'
+                  autoCapitalize='none'
                   {...field}
                 />
               )}
@@ -213,13 +197,12 @@ export default function FormScreen() {
 
             <FormField
               control={form.control}
-              name="description"
+              name='description'
               render={({ field }) => (
                 <FormTextarea
-                  label="Description"
-
-                  placeholder="Habit for ..."
-                  description="habit description"
+                  label='Description'
+                  placeholder='Habit for ...'
+                  description='habit description'
                   {...field}
                 />
               )}
@@ -227,25 +210,27 @@ export default function FormScreen() {
 
             <FormField
               control={form.control}
-              name="category"
+              name='category'
               render={({ field }) => {
                 return (
                   <FormSelect
-                    label="Category"
-                    description="Select on of the habit description"
+                    label='Category'
+                    description='Select on of the habit description'
                     {...field}
                   >
                     <SelectTrigger
                       onLayout={(ev) => {
-                        setSelectTriggerWidth(ev.nativeEvent.layout.width);
+                        setSelectTriggerWidth(ev.nativeEvent.layout.width)
                       }}
                     >
                       <SelectValue
                         className={cn(
-                          "text-sm native:text-lg",
-                          field.value ? "text-foreground" : "text-muted-foreground",
+                          'text-sm native:text-lg',
+                          field.value
+                            ? 'text-foreground'
+                            : 'text-muted-foreground',
                         )}
-                        placeholder="Select a habit category"
+                        placeholder='Select a habit category'
                       />
                     </SelectTrigger>
                     <SelectContent
@@ -271,18 +256,18 @@ export default function FormScreen() {
 
             <FormField
               control={form.control}
-              name="duration"
+              name='duration'
               render={({ field }) => {
                 function onLabelPress(value: number) {
                   return () => {
-                    form.setValue("duration", value);
-                  };
+                    form.setValue('duration', value)
+                  }
                 }
                 return (
                   <FormRadioGroup
-                    label="Duration"
-                    description="Select your duration."
-                    className="gap-4"
+                    label='Duration'
+                    description='Select your duration.'
+                    className='gap-4'
                     {...field}
                     value={field.value.toString()}
                   >
@@ -290,7 +275,7 @@ export default function FormScreen() {
                       return (
                         <View
                           key={item.value}
-                          className={"flex-row gap-2 items-center"}
+                          className={'flex-row gap-2 items-center'}
                         >
                           <RadioGroupItem
                             aria-labelledby={`label-for-${item.label}`}
@@ -298,45 +283,43 @@ export default function FormScreen() {
                           />
                           <Label
                             nativeID={`label-for-${item.label}`}
-                            className="capitalize"
+                            className='capitalize'
                             onPress={onLabelPress(item.value)}
                           >
                             {item.label}
                           </Label>
                         </View>
-                      );
+                      )
                     })}
                   </FormRadioGroup>
-                );
+                )
               }}
             />
 
             <FormField
               control={form.control}
-              name="enableNotifications"
+              name='enableNotifications'
               render={({ field }) => (
                 <FormSwitch
-                  label="Enable reminder"
-                  description="We will send you notification reminder."
+                  label='Enable reminder'
+                  description='We will send you notification reminder.'
                   {...field}
                 />
               )}
             />
 
-            <Button disabled={!form.formState.isDirty} onPress={form.handleSubmit(handleSubmit)}>
+            <Button
+              disabled={!form.formState.isDirty}
+              onPress={form.handleSubmit(handleSubmit)}
+            >
               <Text>Update</Text>
             </Button>
-
-
           </View>
         </Form>
       </FormElement>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-
-          <Button
-            className="shadow shadow-foreground/5 my-4 bg-destructive"
-          >
+          <Button className='shadow shadow-foreground/5 my-4 bg-destructive'>
             <Text>Delete</Text>
           </Button>
         </AlertDialogTrigger>
@@ -351,12 +334,15 @@ export default function FormScreen() {
             <AlertDialogCancel>
               <Text>Cancel</Text>
             </AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive" onPress={handleArchiveHabit}>
+            <AlertDialogAction
+              className='bg-destructive'
+              onPress={handleArchiveHabit}
+            >
               <Text>Delete</Text>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </ScrollView>
-  );
+  )
 }
