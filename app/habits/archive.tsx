@@ -3,11 +3,10 @@ import { FlashList } from '@shopify/flash-list'
 import { eq } from 'drizzle-orm'
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite'
 import { Stack } from 'expo-router'
+import { Archive } from 'lucide-react-native'
 import * as React from 'react'
 import { Alert, View } from 'react-native'
-
 import { HabitCard } from '@/components/habit'
-import { Button } from '@/components/ui'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,13 +16,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Text } from '@/components/ui/text'
 import { useDatabase } from '@/db/provider'
-import { habitTable } from '@/db/schema'
 import type { Habit } from '@/db/schema'
-import { Archive } from 'lucide-react-native'
+import { habitTable } from '@/db/schema'
+
 function Home() {
   const { db } = useDatabase()
   const { data: habits, error } = useLiveQuery(
@@ -48,35 +46,27 @@ function Home() {
   }
 
   async function handleDeleteHabit(habitId: string) {
-    Alert.alert(
-      'Are you absolutely sure?',
-      'Are you sure you want to delete this Habit ?',
-      [
-        {
-          text: 'Cancel',
+    Alert.alert('Are you absolutely sure?', 'Are you sure you want to delete this Habit ?', [
+      {
+        text: 'Cancel',
+      },
+      {
+        text: 'Continue',
+        onPress: async () => {
+          try {
+            await db?.delete(habitTable).where(eq(habitTable.id, habitId)).execute()
+          } catch (error) {
+            console.error('error', error)
+          }
         },
-        {
-          text: 'Continue',
-          onPress: () => {
-            // try {
-            //   await db?.delete(habitTable).where(eq(habitTable.id, habitId)).execute();
-            // } catch (error) {
-            //   console.error("error", error);
-            // }
-          },
-          style: 'destructive',
-        },
-      ],
-    )
+        style: 'destructive',
+      },
+    ])
     // Are you sure you want to delete this Habit ?
   }
   const renderItem = React.useCallback(
     ({ item }: { item: Habit }) => (
-      <HabitCard
-        onDelete={handleDeleteHabit}
-        onRestore={handleRestoreHabit}
-        {...item}
-      />
+      <HabitCard onDelete={handleDeleteHabit} onRestore={handleRestoreHabit} {...item} />
     ),
     [],
   )
@@ -84,12 +74,12 @@ function Home() {
   if (error) {
     return (
       <View className='flex-1 items-center justify-center bg-secondary/30'>
-        <Text className='text-destructive pb-2 '>Error Loading data</Text>
+        <Text className='pb-2 text-destructive'>Error Loading data</Text>
       </View>
     )
   }
   return (
-    <View className='flex flex-1 bg-background  p-8'>
+    <View className='flex flex-1 bg-background p-8'>
       <Stack.Screen
         options={{
           title: 'Archived Habits',
@@ -97,16 +87,13 @@ function Home() {
       />
       <FlashList
         ref={ref}
-        className='native:overflow-hidden rounded-t-lg '
-        estimatedItemSize={10}
+        className='native:overflow-hidden rounded-t-lg'
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
           <View className='flex flex-1 grow-1 items-center justify-center'>
             <Archive className='text-foreground' />
-            <Text className='text-lg text-bold'>Your archive is empty</Text>
-            <Text className='text-sm'>
-              You need to archive at least one habit to see it here.
-            </Text>
+            <Text className='text-bold text-lg'>Your archive is empty</Text>
+            <Text className='text-sm'>You need to archive at least one habit to see it here.</Text>
           </View>
         )}
         ItemSeparatorComponent={() => <View className='p-2' />}
@@ -127,10 +114,7 @@ function Home() {
             <AlertDialogCancel>
               <Text>Cancel</Text>
             </AlertDialogCancel>
-            <AlertDialogAction
-              className='bg-foreground'
-              onPress={() => console.log('pressed')}
-            >
+            <AlertDialogAction className='bg-foreground' onPress={() => console.log('pressed')}>
               <Text>Archive</Text>
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -2,7 +2,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { Link } from 'expo-router'
 import type { LinkProps } from 'expo-router/build/link/Link'
 import type { ExpoRouter } from 'expo-router/types/expo-router'
-import type React from 'react'
+import React from 'react'
 import type { ElementType, JSX } from 'react'
 import {
   Pressable,

@@ -1,4 +1,4 @@
-import { type ExpoSQLiteDatabase, drizzle } from 'drizzle-orm/expo-sqlite'
+import { drizzle, type ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite'
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
 import { openDatabaseSync } from 'expo-sqlite'
 

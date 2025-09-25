@@ -1,3 +1,12 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { eq } from 'drizzle-orm'
+import { createInsertSchema } from 'drizzle-zod'
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { ScrollView, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import * as z from 'zod'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,24 +40,9 @@ import {
 } from '@/components/ui/select'
 import { Text } from '@/components/ui/text'
 import { useDatabase } from '@/db/provider'
-import { habitTable } from '@/db/schema'
 import type { Habit } from '@/db/schema'
+import { habitTable } from '@/db/schema'
 import { cn } from '@/lib/utils'
-import { habitZodSchema } from '@/lib/zodSchema'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { eq } from 'drizzle-orm'
-import { createInsertSchema } from 'drizzle-zod'
-import {
-  Stack,
-  useFocusEffect,
-  useLocalSearchParams,
-  useRouter,
-} from 'expo-router'
-import * as React from 'react'
-import { useForm } from 'react-hook-form'
-import { Alert, Pressable, ScrollView, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import * as z from 'zod'
 
 const HabitCategories = [
   { value: 'health', label: 'Health And Wellness' },
@@ -69,18 +63,12 @@ const HabitDurations = [
 ]
 
 const formSchema = createInsertSchema(habitTable, {
-  name: (schema) =>
-    schema.name.min(4, {
-      message: 'Please enter a habit name.',
-    }),
-  description: (schema) =>
-    schema.description.min(1, {
-      message: 'We need to know.',
-    }),
+  name: z.string().min(4, { error: 'Please enter a habit name.' }),
+  description: z.string().min(1, { error: 'We need to know.' }),
   category: z.object(
     { value: z.string(), label: z.string() },
     {
-      invalid_type_error: 'Please select a favorite email.',
+      error: 'Please select a favorite email.',
     },
   ),
   duration: z.union([z.string(), z.number()]),
@@ -88,7 +76,6 @@ const formSchema = createInsertSchema(habitTable, {
 })
 
 // TODO: refactor to use UI components
-
 export default function FormScreen() {
   const { db } = useDatabase()
   const router = useRouter()
@@ -240,25 +227,16 @@ export default function FormScreen() {
                     >
                       <SelectValue
                         className={cn(
-                          'text-sm native:text-lg',
-                          field.value
-                            ? 'text-foreground'
-                            : 'text-muted-foreground',
+                          'native:text-lg text-sm',
+                          field.value ? 'text-foreground' : 'text-muted-foreground',
                         )}
                         placeholder='Select a habit category'
                       />
                     </SelectTrigger>
-                    <SelectContent
-                      insets={contentInsets}
-                      style={{ width: selectTriggerWidth }}
-                    >
+                    <SelectContent insets={contentInsets} style={{ width: selectTriggerWidth }}>
                       <SelectGroup>
                         {HabitCategories.map((cat) => (
-                          <SelectItem
-                            key={cat.value}
-                            label={cat.label}
-                            value={cat.value}
-                          >
+                          <SelectItem key={cat.value} label={cat.label} value={cat.value}>
                             <Text>{cat.label}</Text>
                           </SelectItem>
                         ))}
@@ -288,10 +266,7 @@ export default function FormScreen() {
                   >
                     {HabitDurations.map((item) => {
                       return (
-                        <View
-                          key={item.value}
-                          className={'flex-row gap-2 items-center'}
-                        >
+                        <View key={item.value} className={'flex-row items-center gap-2'}>
                           <RadioGroupItem
                             aria-labelledby={`label-for-${item.label}`}
                             value={item.value.toString()}
@@ -323,10 +298,7 @@ export default function FormScreen() {
               )}
             />
 
-            <Button
-              disabled={!form.formState.isDirty}
-              onPress={form.handleSubmit(handleSubmit)}
-            >
+            <Button disabled={!form.formState.isDirty} onPress={form.handleSubmit(handleSubmit)}>
               <Text>Update</Text>
             </Button>
           </View>
@@ -334,7 +306,7 @@ export default function FormScreen() {
       </FormElement>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button className='shadow shadow-foreground/5 my-4 bg-destructive'>
+          <Button className='my-4 bg-destructive shadow shadow-foreground/5'>
             <Text>Delete</Text>
           </Button>
         </AlertDialogTrigger>
@@ -349,10 +321,7 @@ export default function FormScreen() {
             <AlertDialogCancel>
               <Text>Cancel</Text>
             </AlertDialogCancel>
-            <AlertDialogAction
-              className='bg-destructive'
-              onPress={handleArchiveHabit}
-            >
+            <AlertDialogAction className='bg-destructive' onPress={handleArchiveHabit}>
               <Text>Delete</Text>
             </AlertDialogAction>
           </AlertDialogFooter>

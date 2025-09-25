@@ -12,18 +12,19 @@ import {
   ArrowUp,
   Baby,
   BadgeAlert,
+  Bell,
   Bold,
+  BookOpen,
   Calendar,
   CalendarDays,
   Check,
-  Settings,
   CheckSquare,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ChevronUp,
   ChevronsDownUp,
   ChevronsUpDown,
+  ChevronUp,
   CircleUserRound,
   Cloud,
   Code,
@@ -32,22 +33,29 @@ import {
   Ear,
   Fan,
   GalleryHorizontal,
-  Github,
   Info,
   Italic,
   Lamp,
   LayoutPanelLeft,
   LifeBuoy,
+  List,
   LogOut,
   type LucideIcon,
   Mail,
   MenuSquare,
   MessageSquare,
+  Moon,
   MoonStar,
+  Palette,
   Plus,
   PlusCircle,
   Search,
+  Send,
+  Settings,
+  Shield,
+  Smartphone,
   Sparkles,
+  Star,
   Sun,
   Table,
   Terminal,
@@ -55,73 +63,83 @@ import {
   UserPlus,
   Users,
   X,
-} from "lucide-react-native";
-import {cssInterop} from "nativewind";
+} from 'lucide-react-native'
+import { cssInterop } from 'nativewind'
+
 function interopIcon(icon: LucideIcon) {
   cssInterop(icon, {
     className: {
-      target: "style",
+      target: 'style',
       nativeStyleToProp: {
         color: true,
         opacity: true,
       },
     },
-  });
+  })
 }
-interopIcon(Settings);
-interopIcon(Sun);
-interopIcon(MoonStar);
-interopIcon(AlignJustify);
-interopIcon(Activity);
-interopIcon(Airplay);
-interopIcon(AlarmClockIcon);
-interopIcon(AlertCircle);
-interopIcon(AlignRight);
-interopIcon(Baby);
-interopIcon(BadgeAlert);
-interopIcon(Calendar);
-interopIcon(CircleUserRound);
-interopIcon(Database);
-interopIcon(Ear);
-interopIcon(Fan);
-interopIcon(GalleryHorizontal);
-interopIcon(Lamp);
-interopIcon(Table);
-interopIcon(ArrowDown);
-interopIcon(ArrowUp);
-interopIcon(ChevronDown);
-interopIcon(LayoutPanelLeft);
-interopIcon(MenuSquare);
-interopIcon(Check);
-interopIcon(ChevronsDownUp);
-interopIcon(ChevronsUpDown);
-interopIcon(Copy);
-interopIcon(CalendarDays);
-interopIcon(Sparkles);
-interopIcon(Bold);
-interopIcon(Italic);
-interopIcon(Underline);
-interopIcon(AlignLeft);
-interopIcon(Info);
-interopIcon(X);
-interopIcon(Search);
-interopIcon(ChevronRight);
-interopIcon(ChevronLeft);
-interopIcon(ChevronUp);
-interopIcon(Cloud);
-interopIcon(LifeBuoy);
-interopIcon(LogOut);
-interopIcon(Mail);
-interopIcon(MessageSquare);
-interopIcon(Plus);
-interopIcon(PlusCircle);
-interopIcon(UserPlus);
-interopIcon(Users);
-interopIcon(AlignCenter);
-interopIcon(Terminal);
-interopIcon(AlertTriangle);
-interopIcon(Code);
-interopIcon(CheckSquare);
+interopIcon(Settings)
+interopIcon(Smartphone)
+interopIcon(Sun)
+interopIcon(MoonStar)
+interopIcon(Moon)
+interopIcon(AlignJustify)
+interopIcon(Activity)
+interopIcon(Airplay)
+interopIcon(AlarmClockIcon)
+interopIcon(AlertCircle)
+interopIcon(AlignRight)
+interopIcon(Baby)
+interopIcon(BadgeAlert)
+interopIcon(Calendar)
+interopIcon(CircleUserRound)
+interopIcon(Database)
+interopIcon(Ear)
+interopIcon(Fan)
+interopIcon(GalleryHorizontal)
+interopIcon(List)
+interopIcon(Lamp)
+interopIcon(Table)
+interopIcon(ArrowDown)
+interopIcon(ArrowUp)
+interopIcon(ChevronDown)
+interopIcon(LayoutPanelLeft)
+interopIcon(MenuSquare)
+interopIcon(Check)
+interopIcon(ChevronsDownUp)
+interopIcon(ChevronsUpDown)
+interopIcon(Copy)
+interopIcon(CalendarDays)
+interopIcon(Sparkles)
+interopIcon(Bold)
+interopIcon(Italic)
+interopIcon(Underline)
+interopIcon(AlignLeft)
+interopIcon(Info)
+interopIcon(X)
+interopIcon(Search)
+interopIcon(ChevronRight)
+interopIcon(ChevronLeft)
+interopIcon(ChevronUp)
+interopIcon(Cloud)
+interopIcon(LifeBuoy)
+interopIcon(LogOut)
+interopIcon(Mail)
+interopIcon(MessageSquare)
+interopIcon(Palette)
+interopIcon(Plus)
+interopIcon(PlusCircle)
+interopIcon(UserPlus)
+interopIcon(Users)
+interopIcon(AlignCenter)
+interopIcon(Terminal)
+interopIcon(AlertTriangle)
+interopIcon(Code)
+interopIcon(CheckSquare)
+interopIcon(BookOpen)
+interopIcon(Send)
+interopIcon(Shield)
+interopIcon(Star)
+interopIcon(Bell)
 
 export {
   Activity,
@@ -158,15 +176,19 @@ export {
   GalleryHorizontal,
   Info,
   Italic,
+  List,
   Lamp,
   LayoutPanelLeft,
   LifeBuoy,
   LogOut,
   Settings,
+  Smartphone,
   Mail,
   MenuSquare,
   MessageSquare,
   MoonStar,
+  Moon,
+  Palette,
   Plus,
   PlusCircle,
   Search,
@@ -178,4 +200,9 @@ export {
   UserPlus,
   Users,
   X,
-};
+  BookOpen,
+  Send,
+  Shield,
+  Star,
+  Bell,
+}

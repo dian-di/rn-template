@@ -1,24 +1,19 @@
-import { Linking, Platform } from 'react-native'
-
-import ListItem from '@/components/ui/list-item'
-import { Text } from '@/components/ui/text'
 import * as IntentLauncher from 'expo-intent-launcher'
 import * as Notifications from 'expo-notifications'
-import { Bell } from 'lucide-react-native'
-import { useState } from 'react'
-import React from 'react'
+import React, { useState } from 'react'
+import { Linking, Platform } from 'react-native'
+import { Bell } from '@/components/Icons'
+import ListItem from '@/components/ui/list-item'
+import { Text } from '@/components/ui/text'
 
 export const NotificationItem = () => {
-  const [permission, setPermission] =
-    useState<Notifications.PermissionStatus | null>(null)
+  const [permission, setPermission] = useState<Notifications.PermissionStatus | null>(null)
 
   const openSettingApp = async () => {
     if (Platform.OS === 'ios') {
       await Linking.openSettings()
     } else {
-      IntentLauncher.startActivityAsync(
-        IntentLauncher.ActivityAction.LOCALE_SETTINGS,
-      )
+      IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.LOCALE_SETTINGS)
     }
   }
   const handleRequestPermissions = async () => {
@@ -38,9 +33,7 @@ export const NotificationItem = () => {
       }}
       itemRight={() => (
         <Text className='text-muted-foreground'>
-          {permission === Notifications.PermissionStatus.GRANTED
-            ? 'Enabled'
-            : 'Disabled'}
+          {permission === Notifications.PermissionStatus.GRANTED ? 'Enabled' : 'Disabled'}
         </Text>
       )}
     />

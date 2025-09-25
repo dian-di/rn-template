@@ -1,14 +1,13 @@
-import List, { ListHeader } from '@/components/ui/list'
-import ListItem from '@/components/ui/list-item'
-import { Muted } from '@/components/ui/typography'
 import * as WebBrowser from 'expo-web-browser'
-import { BookOpen, Send, Shield, Star } from 'lucide-react-native'
 import * as React from 'react'
 import { Linking, Platform } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-
+import { BookOpen, Send, Shield, Star } from '@/components/Icons'
 import { NotificationItem } from '@/components/settings/NotificationItem'
 import { ThemeSettingItem } from '@/components/settings/ThemeItem'
+import List, { ListHeader } from '@/components/ui/list'
+import ListItem from '@/components/ui/list-item'
+import { Muted } from '@/components/ui/typography'
 
 export default function Settings() {
   const openExternalURL = (url: string) => {
@@ -19,7 +18,7 @@ export default function Settings() {
     }
   }
   return (
-    <ScrollView className='flex-1 w-full px-6 bg-background pt-4 gap-y-6'>
+    <ScrollView className='w-full flex-1 gap-y-6 bg-background px-6 pt-4'>
       <List>
         <ListHeader>
           <Muted>App</Muted>
@@ -32,9 +31,7 @@ export default function Settings() {
         <ListItem
           itemLeft={(props) => <Star {...props} />} // props adds size and color attributes
           label='Give us a start'
-          onPress={() =>
-            openExternalURL('https://github.com/expo-starter/expo-template')
-          }
+          onPress={() => openExternalURL('https://github.com/expo-starter/expo-template')}
         />
         <ListItem
           itemLeft={(props) => <Send {...props} />} // props adds size and color attributes

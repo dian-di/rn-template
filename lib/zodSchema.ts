@@ -1,4 +1,4 @@
-import z from 'zod/v4'
+import z from 'zod'
 
 export const habitZodSchema = z.object({
   name: z.string().min(4, {
@@ -10,16 +10,12 @@ export const habitZodSchema = z.object({
   category: z.object(
     {
       value: z.string({
-        error: (issue) =>
-          issue.input === undefined
-            ? 'Please select a category'
-            : 'Not a string',
+        error: (issue) => (issue.input === undefined ? 'Please select a category' : 'Not a string'),
       }),
       label: z.string(),
     },
     {
-      error: (issue) =>
-        issue.input === undefined ? 'Please select a category' : 'Not a string',
+      error: (issue) => (issue.input === undefined ? 'Please select a category' : 'Not a string'),
     },
   ),
   duration: z.coerce.number(),

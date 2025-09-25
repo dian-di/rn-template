@@ -1,3 +1,11 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { createInsertSchema } from 'drizzle-zod'
+import { Stack, useRouter } from 'expo-router'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { ScrollView, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -17,20 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Stack, useRouter } from 'expo-router'
-import * as React from 'react'
-import { useForm } from 'react-hook-form'
-import { ScrollView, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import * as z from 'zod'
-
 import { Text } from '@/components/ui/text'
 import { useDatabase } from '@/db/provider'
 import { habitTable } from '@/db/schema'
 import { cn } from '@/lib/utils'
-import { habitZodSchema } from '@/lib/zodSchema'
-import { createInsertSchema } from 'drizzle-zod'
 
 const HabitCategories = [
   { value: 'health', label: 'Health And Wellness' },
@@ -51,18 +49,12 @@ const HabitDurations = [
 ]
 
 const formSchema = createInsertSchema(habitTable, {
-  name: (schema) =>
-    schema.name.min(4, {
-      message: 'Please enter a habit name.',
-    }),
-  description: (schema) =>
-    schema.description.min(1, {
-      message: 'We need to know.',
-    }),
+  name: z.string().min(4, { error: 'Please enter a habit name.' }),
+  description: z.string().min(1, { error: 'We need to know.' }),
   category: z.object(
     { value: z.string(), label: z.string() },
     {
-      invalid_type_error: 'Please select a favorite email.',
+      error: 'Please select a favorite email.',
     },
   ),
   duration: z.union([z.string(), z.number()]),
@@ -171,23 +163,16 @@ function FormScreen() {
                 >
                   <SelectValue
                     className={cn(
-                      'text-sm native:text-lg',
+                      'native:text-lg text-sm',
                       field.value ? 'text-foreground' : 'text-muted-foreground',
                     )}
                     placeholder='Select a habit category'
                   />
                 </SelectTrigger>
-                <SelectContent
-                  insets={contentInsets}
-                  style={{ width: selectTriggerWidth }}
-                >
+                <SelectContent insets={contentInsets} style={{ width: selectTriggerWidth }}>
                   <SelectGroup>
                     {HabitCategories.map((cat) => (
-                      <SelectItem
-                        key={cat.value}
-                        label={cat.label}
-                        value={cat.value}
-                      >
+                      <SelectItem key={cat.value} label={cat.label} value={cat.value}>
                         <Text>{cat.label}</Text>
                       </SelectItem>
                     ))}
@@ -216,10 +201,7 @@ function FormScreen() {
                 >
                   {HabitDurations.map((item) => {
                     return (
-                      <View
-                        key={item.value}
-                        className={'flex-row gap-2 items-center'}
-                      >
+                      <View key={item.value} className={'flex-row items-center gap-2'}>
                         <RadioGroupItem
                           aria-labelledby={`label-for-${item.label}`}
                           value={item.value.toString()}

@@ -1,8 +1,3 @@
-import { HabitCard } from '@/components/habit'
-import { Text } from '@/components/ui/text'
-import { useMigrationHelper } from '@/db/drizzle'
-import { useDatabase } from '@/db/provider'
-import { type Habit, habitTable } from '@/db/schema'
 import { useScrollToTop } from '@react-navigation/native'
 import { FlashList } from '@shopify/flash-list'
 import { eq } from 'drizzle-orm'
@@ -11,20 +6,25 @@ import { Link, Stack } from 'expo-router'
 import { Plus } from 'lucide-react-native'
 import * as React from 'react'
 import { Platform, Pressable, View } from 'react-native'
+import { HabitCard } from '@/components/habit'
+import { Text } from '@/components/ui/text'
+import { useMigrationHelper } from '@/db/drizzle'
+import { useDatabase } from '@/db/provider'
+import { type Habit, habitTable } from '@/db/schema'
 
 export default function Home() {
   const { success, error } = useMigrationHelper()
 
   if (error) {
     return (
-      <View className='flex-1 gap-5 p-6 bg-secondary/30'>
+      <View className='flex-1 gap-5 bg-secondary/30 p-6'>
         <Text>Migration error: {error.message}</Text>
       </View>
     )
   }
   if (!success) {
     return (
-      <View className='flex-1 gap-5 p-6 bg-secondary/30'>
+      <View className='flex-1 gap-5 bg-secondary/30 p-6'>
         <Text>Migration is in progress...</Text>
       </View>
     )
@@ -58,6 +58,7 @@ function ScreenContent() {
     )
   }
 
+  // biome-ignore lint/correctness/useHookAtTopLevel: <>
   const { data: habits, error } = useLiveQuery(
     db.select().from(habitTable).where(eq(habitTable.archived, false)),
   )
@@ -65,13 +66,13 @@ function ScreenContent() {
   if (error) {
     return (
       <View className='flex-1 items-center justify-center bg-secondary/30'>
-        <Text className='text-destructive pb-2 '>Error Loading data</Text>
+        <Text className='pb-2 text-destructive'>Error Loading data</Text>
       </View>
     )
   }
 
   return (
-    <View className='flex flex-col basis-full bg-background  p-8'>
+    <View className='flex basis-full flex-col bg-background p-8'>
       <Stack.Screen
         options={{
           title: 'Habits',
@@ -80,7 +81,6 @@ function ScreenContent() {
       <FlashList
         ref={ref}
         className='native:overflow-hidden rounded-t-lg'
-        estimatedItemSize={49}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
           <View>
@@ -91,11 +91,11 @@ function ScreenContent() {
             {Platform.OS !== 'web' && (
               <Text className='text-sm'>
                 If you change the schema, you need to run{' '}
-                <Text className='text-sm font-mono text-muted-foreground bg-muted'>
+                <Text className='bg-muted font-mono text-muted-foreground text-sm'>
                   bun db:generate
                 </Text>
-                <Text className='text-sm px-1'>then</Text>
-                <Text className='text-sm font-mono text-muted-foreground bg-muted'>
+                <Text className='px-1 text-sm'>then</Text>
+                <Text className='bg-muted font-mono text-muted-foreground text-sm'>
                   bun migrate
                 </Text>
               </Text>
@@ -108,11 +108,11 @@ function ScreenContent() {
         keyExtractor={(_, index) => `item-${index}`}
         ListFooterComponent={<View className='py-4' />}
       />
-      <View className='absolute web:bottom-20 bottom-10 right-8'>
+      <View className='absolute right-8 bottom-10 web:bottom-20'>
         <Link href='/create' asChild>
           <Pressable>
-            <View className='bg-primary justify-center rounded-full h-[45px] w-[45px]'>
-              <Plus className='text-background self-center' />
+            <View className='h-[45px] w-[45px] justify-center rounded-full bg-primary'>
+              <Plus className='self-center text-background' />
             </View>
           </Pressable>
         </Link>

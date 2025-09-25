@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router'
-import { List, Settings } from 'lucide-react-native'
 import React from 'react'
+import { List, Settings } from '@/components/Icons'
 
 export const unstable_settings = {
   initialRouteName: 'index',
